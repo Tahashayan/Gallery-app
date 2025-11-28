@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="120dp"
+    android:height="120dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+
+    <!-- Outer frame of photo -->
+    <path
+        android:fillColor="#FF6200EE"
+        android:pathData="M21,19V5c0,-1.1 -0.9,-2 -2,-2H5c-1.1,0 -2,0.9 -2,2v14c0,1.1 0.9,2 2,2h14c1.1,0 2,-0.9 2,-2zM5,5h14v14H5V5z"/>
+
+    <!-- Circle for photo lens / center -->
+    <path
+        android:fillColor="#FF6200EE"
+        android:pathData="M12,12c1.65,0 3,-1.35 3,-3s-1.35,-3 -3,-3 -3,1.35 -3,3 1.35,3 3,3z"/>
+
+    <!-- Bottom mountains / shapes -->
+    <path
+        android:fillColor="#FF6200EE"
+        android:pathData="M5,17l4,-5 3,4 4,-5 3,6H5z"/>
+</vector>
