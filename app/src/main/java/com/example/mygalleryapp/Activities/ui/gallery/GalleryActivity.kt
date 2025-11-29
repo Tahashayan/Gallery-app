@@ -7,6 +7,7 @@ import android.graphics.BitmapFactory
 import android.graphics.Rect
 import android.net.Uri
 import android.os.Bundle
+import android.os.Parcelable
 import android.provider.MediaStore
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -14,8 +15,10 @@ import com.example.mygalleryapp.Adapters.MixedAdapter
 import com.example.mygalleryapp.databinding.ActivityGalleryBinding
 import com.example.mygalleryapp.ml.FaceDetectorHelper
 import com.example.mygalleryapp.ml.FaceEmbeddingHelper
+import com.example.mygalleryapp.ui.albums.AlbumActivity
 import com.example.mygalleryapp.ui.photoview.PhotoViewActivity
 import kotlinx.coroutines.*
+import kotlinx.parcelize.Parcelize
 import java.nio.ByteBuffer
 import kotlin.math.sqrt
 
@@ -42,14 +45,19 @@ class GalleryActivity : AppCompatActivity() {
         binding.rvClusters.layoutManager = LinearLayoutManager(this)
 
         loadImages()
-
+        binding.buttonAlbum.setOnClickListener {
+            val intent = Intent(this, AlbumActivity::class.java)
+            // Pass the clusters data using Parcelable
+            intent.putParcelableArrayListExtra("clusters", ArrayList(clusters))
+            startActivity(intent)
+        }
         binding.btnAllPhotos.setOnClickListener { loadImages() }
         binding.btnAlbums.setOnClickListener { if (clusters.isNotEmpty()) showClusters() }
     }
 
     private fun loadImages() {
         coroutineScope.launch {
-            val images = withContext(Dispatchers.IO) { getAllImages() }
+            val images = withContext(Dispatchers.IO) { getCameraPhotosOnly() }
 
             photoList.clear()
             photoList.addAll(images)
@@ -111,7 +119,6 @@ class GalleryActivity : AppCompatActivity() {
         )
     }
 
-
     private fun cropFaceFromBitmap(bitmap: Bitmap, rect: Rect) =
         Bitmap.createBitmap(
             bitmap,
@@ -132,15 +139,35 @@ class GalleryActivity : AppCompatActivity() {
         return contentResolver.openInputStream(uri).use { BitmapFactory.decodeStream(it, null, decodeOptions) }!!
     }
 
-    private fun getAllImages(): List<Uri> {
+    // MODIFIED: Now filters for Camera photos only
+    private fun getCameraPhotosOnly(): List<Uri> {
         val list = mutableListOf<Uri>()
-        val projection = arrayOf(MediaStore.Images.Media._ID)
+        val projection = arrayOf(
+            MediaStore.Images.Media._ID,
+            MediaStore.Images.Media.BUCKET_DISPLAY_NAME,
+            MediaStore.Images.Media.DATA
+        )
         val sortOrder = "${MediaStore.Images.Media.DATE_ADDED} DESC"
-        contentResolver.query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, projection, null, null, sortOrder)?.use { cursor ->
+
+        contentResolver.query(
+            MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+            projection,
+            null,
+            null,
+            sortOrder
+        )?.use { cursor ->
             val idColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media._ID)
+            val bucketColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.BUCKET_DISPLAY_NAME)
+
             while (cursor.moveToNext()) {
-                val id = cursor.getLong(idColumn)
-                list.add(ContentUris.withAppendedId(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, id))
+                val bucketName = cursor.getString(bucketColumn) ?: ""
+
+                // Filter for Camera folder only
+                if (bucketName.equals("Camera", ignoreCase = true) ||
+                    bucketName.equals("DCIM", ignoreCase = true)) {
+                    val id = cursor.getLong(idColumn)
+                    list.add(ContentUris.withAppendedId(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, id))
+                }
             }
         }
         return list
@@ -301,9 +328,14 @@ class GalleryActivity : AppCompatActivity() {
             )
         }
 
+        // DEBUG: Log to check if flashbacks were found
+        android.util.Log.d("FlashbackDebug", "Total flashback memories found: ${memories.size}")
+        memories.forEach { memory ->
+            android.util.Log.d("FlashbackDebug", "${memory.title}: ${memory.photos.size} photos")
+        }
+
         return memories
     }
-
 
     private fun cosineDistance(a: FloatArray, b: FloatArray): Float {
         var dot = 0f
@@ -322,9 +354,28 @@ class GalleryActivity : AppCompatActivity() {
         coroutineScope.cancel()
     }
 
-    data class FaceData(val photoUri: Uri, val embedding: FloatArray)
-    data class FaceCluster(val id: Int, val faces: List<FaceData>, val name: String)
+    // Made data classes Parcelable using @Parcelize
+    @Parcelize
+    data class FaceData(val photoUri: Uri, val embedding: FloatArray) : Parcelable {
+        override fun equals(other: Any?): Boolean {
+            if (this === other) return true
+            if (javaClass != other?.javaClass) return false
+            other as FaceData
+            if (photoUri != other.photoUri) return false
+            if (!embedding.contentEquals(other.embedding)) return false
+            return true
+        }
+
+        override fun hashCode(): Int {
+            var result = photoUri.hashCode()
+            result = 31 * result + embedding.contentHashCode()
+            return result
+        }
+    }
+
+    @Parcelize
+    data class FaceCluster(val id: Int, val faces: List<FaceData>, val name: String) : Parcelable
+
     data class FlashbackMemory(val title: String, val photos: List<FlashbackPhoto>)
     data class FlashbackPhoto(val uri: Uri, val dateTaken: Long)
 }
-

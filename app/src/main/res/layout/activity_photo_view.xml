@@ -1,11 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@android:color/black">
 
+    <!-- Single Photo View -->
     <ImageView
         android:id="@+id/imgPhoto"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:scaleType="fitCenter"/>
+        android:scaleType="centerInside"
+        android:contentDescription="Photo"
+        android:visibility="gone" />
+
+    <!-- Grid Photo View for Albums -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvPhotos"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="8dp"
+        android:background="@android:color/white"
+        android:visibility="gone" />
+
 </FrameLayout>
