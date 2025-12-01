@@ -17,6 +17,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MyGalleryApp">
         <activity
+            android:name=".ui.slideshow.SlideshowActivity"
+            android:exported="false" />
+        <activity
             android:name=".ui.albums.AlbumActivity"
             android:exported="false" />
         <activity

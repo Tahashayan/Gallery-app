@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/black">
+
+    <!-- Slideshow Image -->
+    <ImageView
+        android:id="@+id/imgSlideshow"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="centerInside"
+        android:contentDescription="Slideshow Image" />
+
+    <!-- Top Bar -->
+    <LinearLayout
+        android:id="@+id/topBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:background="#80000000"
+        android:padding="16dp"
+        android:gravity="center_vertical">
+
+        <TextView
+            android:id="@+id/tvAlbumName"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Album Name"
+            android:textColor="@android:color/white"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <ImageButton
+            android:id="@+id/btnClose"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:src="@drawable/ic_close"
+            android:tint="@android:color/white"
+            android:contentDescription="Close" />
+    </LinearLayout>
+
+    <!-- Bottom Controls -->
+    <LinearLayout
+        android:id="@+id/controlsLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:orientation="vertical"
+        android:background="#80000000"
+        android:padding="16dp">
+
+        <!-- Photo Counter -->
+        <TextView
+            android:id="@+id/tvPhotoCount"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="1 / 10"
+            android:textColor="@android:color/white"
+            android:textSize="14sp"
+            android:gravity="center"
+            android:layout_marginBottom="12dp" />
+
+        <!-- Control Buttons -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center">
+
+            <ImageButton
+                android:id="@+id/btnPrevious"
+                android:layout_width="56dp"
+                android:layout_height="56dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:src="@drawable/ic_previous"
+                android:tint="@android:color/white"
+                android:contentDescription="Previous"
+                android:layout_marginEnd="32dp" />
+
+            <ImageButton
+                android:id="@+id/btnPlayPause"
+                android:layout_width="64dp"
+                android:layout_height="64dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:src="@drawable/ic_pause"
+                android:tint="@android:color/white"
+                android:contentDescription="Play/Pause"
+                android:layout_marginHorizontal="32dp" />
+
+            <ImageButton
+                android:id="@+id/btnNext"
+                android:layout_width="56dp"
+                android:layout_height="56dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:src="@drawable/ic_next"
+                android:tint="@android:color/white"
+                android:contentDescription="Next"
+                android:layout_marginStart="32dp" />
+        </LinearLayout>
+    </LinearLayout>
+
+</FrameLayout>

@@ -14,14 +14,20 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <!-- KEN BURNS IMAGE -->
         <com.flaviofaria.kenburnsview.KenBurnsView
             android:id="@+id/imgAlbumCover"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:scaleType="centerCrop" />
 
-        <!-- Title overlay -->
+        <com.flaviofaria.kenburnsview.KenBurnsView
+            android:id="@+id/imgAlbumCoverOverlay"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="centerCrop"
+            android:visibility="gone"
+            android:alpha="0" />
+
         <View
             android:layout_width="match_parent"
             android:layout_height="50dp"
